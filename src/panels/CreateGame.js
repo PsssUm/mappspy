@@ -27,13 +27,21 @@ class CreateGame extends React.Component {
         this.newHash = "new_game1"
 	}
 	componentDidMount(){
-        bridge.subscribe(this.onBridgeResult);
         this.subscribeBD()
+        this.setState({players : []})
+        
     }
     componentDidUpdate(newProps){
         if (this.props != newProps){
             this.subscribeBD()
         }
+    }
+    componentWillUnmount(){
+        bridge.subscribe(this.empty);
+        console.log("componentWillUnmount")
+    }
+    empty = () => {
+
     }
     subscribeBD = () => {
         // this.hash = ""
@@ -46,7 +54,7 @@ class CreateGame extends React.Component {
     onBridgeResult = (e) => {
         switch (e.detail.type) {
             case "VKWebAppShareResult":
-                console.log("VKWebAppShareResult")
+                console.log("VKWebAppShareResult players = " + JSON.stringify(this.state.players))
                 set(ref(this.props.db, 'games/' + this.newHash), {timerTime : 0, players : this.state.players});
                 
             break;
@@ -104,6 +112,7 @@ class CreateGame extends React.Component {
             this.setState({step : 'how_play'})
         } else if (step == "how_play"){
             this.generateCards()
+            bridge.subscribe(this.empty);
             this.setState({step : 'cards_ready', isMultiplayer : false})
         } else if (step == "cards_ready"){
             if (this.state.isMultiplayer){
@@ -183,8 +192,10 @@ class CreateGame extends React.Component {
     openMultiplayer = () => {
         this.generateCards()
         this.setState({step : 'cards_ready', isMultiplayer : true})
+        bridge.subscribe(this.onBridgeResult);
     }
     shareToFriends = () => {
+        set(ref(this.props.db, 'games/' + this.newHash), null);
         bridge.send("VKWebAppShare", {"link": "https://vk.com/app8196651#" + this.newHash});
     }
     startMultiplayer = () => {

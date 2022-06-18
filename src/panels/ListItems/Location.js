@@ -16,7 +16,6 @@ class Location extends React.Component {
         }
     }
 	render() {
-        console.log("this.props.location = " + JSON.stringify(this.props.location))
         return (
             <div className="location_item">
                 <img onClick={this.addLocation} className="location_img" src={this.props.location.name != "" ? custom : this.props.location.img}/>

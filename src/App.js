@@ -92,8 +92,6 @@ class App extends React.Component {
 	}
 	openView = (view) => {
 		this.setState({activeView : view})
-		console.log("view = " + view)
-		console.log("href = " + window.location.href)
 
 	}
 	setTimer = (playersCount, dbData) => {
@@ -111,7 +109,6 @@ class App extends React.Component {
 			data.allSeconds = plusSeconds/1000
 			set(ref(this.database, 'games/' + this.hash), data);
 		} else {	
-			console.log("setTimer = " + plusSeconds)		
 			this.setState({activeView : 'timer', timerTime : Date.now() + plusSeconds, currentTimerSeconds : plusSeconds/1000, allSeconds : plusSeconds/1000, isMultiplayer : false})
 			setTimeout(this.timeoutTimer, 1000);
 		}
@@ -140,8 +137,7 @@ class App extends React.Component {
 	}
 	timeoutTimer = () => {
 		const seconds = parseInt(Math.round((this.state.timerTime - Date.now())/1000))
-		console.log("timeoutTimer = " + seconds)
-		console.log("timeoutTimer = " + this.state.timerTime)
+		
 		if (seconds > 0){
 			this.setState({currentTimerSeconds : seconds})
 			setTimeout(this.timeoutTimer, 1000);
